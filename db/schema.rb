@@ -21,6 +21,9 @@ ActiveRecord::Schema.define(version: 20160502084823) do
     t.datetime "updated_at",                 null: false
   end
 
+  add_index "account_infos", ["broker_id"], name: "index_account_infos_on_broker_id", using: :btree
+  add_index "account_infos", ["stakeholder_id"], name: "index_account_infos_on_stakeholder_id", using: :btree
+
   create_table "brokers", force: :cascade do |t|
     t.string   "code",       limit: 255
     t.string   "name",       limit: 255
@@ -53,5 +56,7 @@ ActiveRecord::Schema.define(version: 20160502084823) do
     t.datetime "updated_at",             null: false
   end
 
+  add_foreign_key "account_infos", "brokers"
+  add_foreign_key "account_infos", "stakeholders"
   add_foreign_key "security_infos", "markets"
 end
