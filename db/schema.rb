@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160726062254) do
+ActiveRecord::Schema.define(version: 20160726135949) do
 
   create_table "account_infos", force: :cascade do |t|
     t.string   "code",           limit: 255
@@ -38,6 +38,24 @@ ActiveRecord::Schema.define(version: 20160726062254) do
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
+
+  create_table "capital_flows", force: :cascade do |t|
+    t.integer  "account_info_id",  limit: 4
+    t.integer  "business_type_id", limit: 4
+    t.integer  "security_info_id", limit: 4
+    t.date     "trade_date",                                                          null: false
+    t.decimal  "trade_price",                  precision: 16, scale: 2, default: 0.0, null: false
+    t.decimal  "trade_quantity",               precision: 16, scale: 2, default: 0.0, null: false
+    t.decimal  "amount",                       precision: 16, scale: 2, default: 0.0, null: false
+    t.decimal  "balance",                      precision: 16, scale: 2, default: 0.0, null: false
+    t.string   "remarks",          limit: 255
+    t.datetime "created_at",                                                          null: false
+    t.datetime "updated_at",                                                          null: false
+  end
+
+  add_index "capital_flows", ["account_info_id"], name: "index_capital_flows_on_account_info_id", using: :btree
+  add_index "capital_flows", ["business_type_id"], name: "index_capital_flows_on_business_type_id", using: :btree
+  add_index "capital_flows", ["security_info_id"], name: "index_capital_flows_on_security_info_id", using: :btree
 
   create_table "markets", force: :cascade do |t|
     t.string   "code",       limit: 255
@@ -79,5 +97,7 @@ ActiveRecord::Schema.define(version: 20160726062254) do
 
   add_foreign_key "account_infos", "brokers"
   add_foreign_key "account_infos", "stakeholders"
+  add_foreign_key "capital_flows", "account_infos"
+  add_foreign_key "capital_flows", "business_types"
   add_foreign_key "security_infos", "markets"
 end

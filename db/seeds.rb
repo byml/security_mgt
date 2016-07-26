@@ -27,15 +27,24 @@ market_hk = Market.create(code: 'hk', name: '港交所')
 SecurityInfo.create([
 		{code: 'sh600004', trade_code: '600004', name: '白云机场', market: market_sh},
 		{code: 'sh600028', trade_code: '600028', name: '中国石化', market: market_sh},
+		{code: 'sh600030', trade_code: '600030', name: '招商银行', market: market_sh},
+		{code: 'sh600036', trade_code: '600036', name: '中信证券', market: market_sh},
 		{code: 'sh601006', trade_code: '601006', name: '大秦铁路', market: market_sh},
 		{code: 'sh601318', trade_code: '601318', name: '中国平安', market: market_sh},
-		{code: 'sh600036', trade_code: '600036', name: '招商银行', market: market_sh},
 
 		{code: 'sz000002', trade_code: '000002', name: '万科A', 	 market: market_sz},
 		{code: 'sz000895', trade_code: '000895', name: '双汇发展', market: market_sz}
 	])
 
+BusinessType.create([
+		{name: '银证转入', alias_names: '|银行转存|'},
+		{name: '银证转出', alias_names: '|银行转取|'},
+		{name: '证券买入'},
+		{name: '证券卖出'},
+	])
+
 #证券持仓
 
 #资金流水
-#reference: account_info, reference: security_info, reference: trade_type, date: trade_date, decimal: amout, decimal: quantity
+#证券账户 业务类型 成交日期 成交价格 成交数量 发生金额 资金余额 备注
+#references: account_info, references: security_info, references: bysiness_type, date: trade_date, decimal: amout, decimal: quantity
