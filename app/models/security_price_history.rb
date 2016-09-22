@@ -1,5 +1,6 @@
 require 'rest-client'
 
+# 每日非复权行情信息
 class SecurityPriceHistory < ActiveRecord::Base
   belongs_to :security_info
 
@@ -28,8 +29,10 @@ class SecurityPriceHistory < ActiveRecord::Base
     security_price_history
   end
 
-  def self.query_and_record_histories(security_infos, trade_date)
-    security_infos.each do |security_info|
+  def self.query_and_record_histories(security_info, from_date, to_date)
+    from_date = Date.parse(from_date) if 'String' == from_date.class.name
+    to_date = Date.parse(to_date) if 'String' == to_date.class.name
+    (from_date..to_date).each do |trade_date|
       query_and_record_history(security_info, trade_date)
     end
   end
@@ -37,8 +40,8 @@ class SecurityPriceHistory < ActiveRecord::Base
   def self.query_and_record_histories_in_range(security_infos, from_date, to_date)
     from_date = Date.parse(from_date) if 'String' == from_date.class.name
     to_date = Date.parse(to_date) if 'String' == to_date.class.name
-    (from_date..to_date).each do |trade_date|
-      query_and_record_histories(security_infos, trade_date)
+    security_infos.each do |security_info|
+      query_and_record_histories(security_info, from_date, to_date)
     end
   end
 
@@ -47,5 +50,29 @@ class SecurityPriceHistory < ActiveRecord::Base
       url = URL_SH_AND_SZ
     end
     url
+  end
+
+  #获取指定股票 每日非复权行情信息最晚的交易日
+  def self.get_lastest_trade_date_hash(security_info_ids)
+    security_price_histories = where('security_info_id IN (?)', security_info_ids).
+      group(:security_info_id).
+      select('security_info_id, MAX(trade_date) AS lastest_trade_date')
+
+    lastest_trade_date_hash = {}
+
+    security_price_histories.each do |security_price_history|
+      lastest_trade_date_hash[security_price_history[:security_info_id]] = security_price_history[:lastest_trade_date]
+    end
+    lastest_trade_date_hash
+  end
+
+  def self.xxx(security_info_ids)
+    lastest_trade_date_hash = get_lastest_trade_date_hash(security_info_ids)
+
+    today = Date.today
+    lastest_trade_date_hash.each do | security_info_id, lastest_trade_date |
+      security_info = SecurityInfo.find(security_info_id)
+      query_and_record_histories(security_info, lastest_trade_date, today)
+    end
   end
 end
